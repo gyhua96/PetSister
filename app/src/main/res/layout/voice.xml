@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/rl"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:background="@color/bg_color">
+<TextView
+    android:id="@+id/tv"
+    android:layout_width="fill_parent"
+    android:layout_height="80dip"
+    android:layout_marginTop="30dip"
+    android:text="松开取消语音发送"
+    android:gravity="center"
+    android:textSize="20sp"
+    android:textColor="@android:color/black"
+    android:visibility="gone"
+    />
+
+
+
+</RelativeLayout>
