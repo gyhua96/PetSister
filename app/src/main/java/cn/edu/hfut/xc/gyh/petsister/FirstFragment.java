@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.icu.text.SymbolTable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,7 +26,9 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,6 +57,7 @@ public class FirstFragment extends Fragment {
     // 音频文件保存地址
     private String path;
     private String saveFilePath;
+    private String vfname;
     // 所录音的文件
     String[] listFile = null;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,9 +98,11 @@ public class FirstFragment extends Fragment {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         tip.setVisibility(View.VISIBLE);
-                        System.out.println("touched");
+
                         tip.setText("手指上滑取消发送");
-                        saveFilePath=path+"/"+UUID.randomUUID().toString() + ".amr";
+                        vfname=UUID.randomUUID().toString();
+                        System.out.println(vfname);
+                        saveFilePath=path+"/"+vfname+ ".amr";
                         myRecorder = new MediaRecorder();
                         // 从麦克风源进行录音
                         myRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
@@ -131,9 +137,14 @@ public class FirstFragment extends Fragment {
                             myRecorder.reset();
                             myRecorder.release();
                             System.out.println(saveFilePath);
+                            System.out.println("wrong?"+vfname);
                             Toast.makeText(getActivity(), "正在发送", 1).show();
+                            sendVoice sv=new sendVoice();
+                            sv.execute(null,null);
                         }
                         tip.setVisibility(View.GONE);
+
+
                         break;
                     default:
                         break;
@@ -165,15 +176,12 @@ public class FirstFragment extends Fragment {
                         Feed fd=new Feed(feed);
                         fd.execute(null,null);
                         System.out.println(feed);
-                        //Toast.makeText(MainActivity.this, "感谢使用本软件,再见", Toast.LENGTH_SHORT).show();
                     }
                 });
 //设置取消按钮
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Toast.makeText(MainActivity.this, "若不自宫,一定不成功", Toast.LENGTH_SHORT).show();
-                        //iflogin=sharedPreferences.getString("uuid","").equals("");
                     }
                 });
 //使用创建器生成一个对话框对象
@@ -368,6 +376,84 @@ public class FirstFragment extends Fragment {
                 httpURLConnection.disconnect();
             }
             return "execute end ";
+        }
+    }
+    class sendVoice extends AsyncTask<Void, Void, Boolean> {
+        String end = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        public sendVoice(){
+            System.out.println("sendvoicefile");
+        }
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                URL url = new URL(Config.VoiceHost);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url
+                        .openConnection();
+                // 设置每次传输的流大小，可以有效防止手机因为内存不足崩溃
+                // 此方法用于在预先不知道内容长度时启用没有进行内部缓冲的 HTTP 请求正文的流。
+                httpURLConnection.setChunkedStreamingMode(128 * 1024);// 128K
+                // 允许输入输出流
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setUseCaches(false);
+                // 使用POST方法
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setRequestProperty("Connection", "Keep-Alive");
+                httpURLConnection.setRequestProperty("Charset", "UTF-8");
+                httpURLConnection.setRequestProperty("Content-Type",
+                        "multipart/form-data;boundary=" + boundary);
+
+                DataOutputStream dos = new DataOutputStream(
+                        httpURLConnection.getOutputStream());
+                dos.writeBytes(twoHyphens + boundary + end);
+                dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\"; filename=\""
+                        + saveFilePath.substring(saveFilePath.lastIndexOf("/") + 1)
+                        + "\""
+                        + end);
+                dos.writeBytes(end);
+
+                FileInputStream fis = new FileInputStream(saveFilePath);
+                byte[] buffer = new byte[8192]; // 8k
+                int count = 0;
+                // 读取文件
+                while ((count = fis.read(buffer)) != -1) {
+                    dos.write(buffer, 0, count);
+                }
+                fis.close();
+
+                dos.writeBytes(end);
+                dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
+                dos.flush();
+
+                InputStream is = httpURLConnection.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is, "utf-8");
+                BufferedReader br = new BufferedReader(isr);
+                String result = br.readLine();
+                System.out.println("r" + result);
+                dos.close();
+                is.close();
+
+
+                Socket client = new Socket(Config.ServerIp, Config.ServerPort);
+                PrintWriter cc = new PrintWriter(client.getOutputStream());
+                //cc.write(Config.FeedUp + "\n");        //注意加一个换行符
+                cc.write(Config.sendV + "|"+vfname+ ".amr\n");
+                //目录为 ./voice/xxxxx.amr
+                cc.flush();
+                //str=input.next();
+                //String ReceiveString = br.readLine();
+                //System.out.println(ReceiveString);
+                client.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return true;
+        }
+        protected void onPostExecute(final Boolean success) {
+            System.out.println("send success");
+            //Toast.makeText(getActivity(), "发送成功", 1).show();
         }
     }
 }

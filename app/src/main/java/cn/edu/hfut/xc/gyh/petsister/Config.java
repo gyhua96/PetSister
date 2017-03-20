@@ -12,9 +12,10 @@ public class Config {
     public static String LoginHost="http://"+ServerIp+"/test/login.php";
     public static String TempHost="http://"+ServerIp+"/test/tp.php";
     public static String WeightHost="http://"+ServerIp+"/test/weight.php";
-    //public static String Analysis="http://"+ServerIp+"/test/analysis.php";
+    public static String VoiceHost="http://"+ServerIp+"/test/voice.php";
     public static String Analysis="http://"+ServerIp+"/test/analysis.php";
     public static String TakePhoto="getPicture";
     public static String FeedUp="zhuan";
     public static String GetWeight="getWeight";
+    public static String sendV="sentvoice";
 }
