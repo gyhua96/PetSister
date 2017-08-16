@@ -16,9 +16,9 @@
 <p>&nbsp; &nbsp; 主要功能：该APP作为宠物喂食器的一个控制端，配合相关服务器以及宠物喂食器，完成喂食及部分监控功能。</p>
 <p>&nbsp; &nbsp; 涉及的技术：Socket,HttpRequest,SharePrefrences,Fragement等等。</p>
 <p>&nbsp; &nbsp; 主界面如下</p>
-<p><img src="/ueditor/php/upload/image/20170320/1489980302797488.png" title="1489980302797488.png" alt="Screenshot_2017-03-20-11-12-18-484_cn.edu.hfut.xc.gyh.petsister.png" width="282" height="397" style="width: 282px; height: 397px;"></p>
+<p><img src="http://www.gongyuhua.cn/ueditor/php/upload/image/20170320/1489980302797488.png" title="1489980302797488.png" alt="Screenshot_2017-03-20-11-12-18-484_cn.edu.hfut.xc.gyh.petsister.png" width="282" height="397" style="width: 282px; height: 397px;"></p>
 <p>&nbsp; &nbsp; 拍照界面：</p>
-<p><img src="/ueditor/php/upload/image/20170320/1489980392584316.png" title="1489980392584316.png" alt="Screenshot_2017-03-20-11-12-27-065_cn.edu.hfut.xc.gyh.petsister.png" width="279" height="423" style="width: 279px; height: 423px;"></p>
+<p><img src="ttp://www.gongyuhua.cn/ueditor/php/upload/image/20170320/1489980392584316.png" title="1489980392584316.png" alt="Screenshot_2017-03-20-11-12-27-065_cn.edu.hfut.xc.gyh.petsister.png" width="279" height="423" style="width: 279px; height: 423px;"></p>
 <p>GitHub项目地址：</p>
 <p><a href="https://github.com/gyhua96/PetSister" target="_blank" title="PetSister">PetSister</a></p>
 <p></p>
